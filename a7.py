@@ -1,4 +1,4 @@
-
+# Edison Ortega 
 import math, os, pickle, re
 from typing import Tuple, List, Dict
 
@@ -145,6 +145,7 @@ class BayesClassifier:
         # individual feature
         pos_denominator = sum(self.pos_freqs.values())
         neg_denominator = sum(self.neg_freqs.values())
+
 
         # for each token in the text, calculate the probability of it occurring in a
         # postive document and in a negative document and add the logs of those to the
