@@ -146,6 +146,11 @@ class BayesClassifier:
         pos_denominator = sum(self.pos_freqs.values())
         neg_denominator = sum(self.neg_freqs.values())
 
+        vocab = set(self.pos_freqs.keys()).union(self.neg_freqs.keys()) 
+        vocab_size = len(vocab) 
+
+        file = self.load_file("sorted_stoplist.txt")
+        stopwords = self.tokenize(file)
 
         # for each token in the text, calculate the probability of it occurring in a
         # postive document and in a negative document and add the logs of those to the
@@ -153,17 +158,17 @@ class BayesClassifier:
         # of each probability for add one smoothing (so that we never have a probability
         # of 0)
         for token in tokens:
-            pos_freqs = self.pos_freqs.get(token, 0) + 1
-            neg_freqs = self.neg_freqs.get(token, 0) + 1
-            print(pos_freqs, neg_freqs)
+            if token not in stopwords:
+                pos_freqs = self.pos_freqs.get(token, 0) + 1
+                neg_freqs = self.neg_freqs.get(token, 0) + 1
 
-            pos_score += math.log(pos_freqs / pos_denominator)
-            neg_score += math.log(neg_freqs / neg_denominator)
+                pos_score += math.log(pos_freqs / pos_denominator)
+                neg_score += math.log(neg_freqs / neg_denominator)
 
-            print(pos_score, neg_score)
         # for debugging purposes, it may help to print the overall positive and negative
         # probabilities
-        
+        print(f"Positive Probability: {pos_score}")
+        print(f"Negative Probability: {neg_score}")
 
         # determine whether positive or negative was more probable (i.e. which one was
         # larger)
@@ -310,4 +315,16 @@ if __name__ == "__main__":
     print("\nThe following should all be negative.")
     print(b.classify('rainy days are the worst'))
     print(b.classify('computer science is terrible'))
+
+    print("\nThe following is to test out the method with each groups responses")
+    print(b.classify('Summer break is almost here.  I am super excited and I know that its going to be the best'))
+    print(b.classify('We must be positive and optimistic even though times are tough'))
+    print(b.classify('The beautiful mindset of today, lays the groundwork for future prosperity'))
+    print(b.classify('I am nervous that I wont do well on the AP tests.  I have studied, but I dont think Ill do that well'))
+    print(b.classify('We have failed, there are no turnbacks or redemptions. The failures of our campaign shall define the course of our history'))
+    print(b.classify('The pop-quiz shattered my hopes of obtaining a good grade. It is so over.'))
+    print(b.classify('Really great movie, beware of the chicken jockey joke though.'))
+    print(b.classify('I liked the book  very much. It drives home the insignificance of constantly analysing yourself and your emotions and needing to know exactly what and how you’re feeling every second. The book is packed with a lot of different messages and ideas but this stood out to me the most. And the protagonist becomes an outsider to society exactly because of this reason; he refuses to lie and fabricate and extrapolate the truth, ie, he is EXTREMELY honest, but never in a malicious way or with malicious intent. He just refuses to make or agree with statements just because society adheres to them and just because they are socially acceptable. Mersault’s character truly is an eye opener and really feels refreshing to read; he’s honest but isn’t insulting. The flow of the writing feels effortless and everything is described almost intimately like a diary. Absolutely loved it, it was really enthralling; I honestly didn’t think I would be so engrossed in a book written in the 1940s.'))
+    print(b.classify('The most absurd smear of absurd un-reconstituted, irredeemable and clearly meaningless nihilism that I have ever encountered.  Makes Thomas Hardy and Fyodor Dostoevsky seem like light romantic comedy writers in comparison.  This can appear "deep" to only the lightest weight among intellects.'))
+    print(b.classify('Itd bad'))
     pass
